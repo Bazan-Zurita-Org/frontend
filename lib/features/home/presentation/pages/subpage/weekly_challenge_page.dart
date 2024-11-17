@@ -66,6 +66,7 @@ class ItemWeekly extends StatefulWidget {
 class _ItemWeeklyState extends State<ItemWeekly> {
   final oponnentsID = <dynamic>[];
   final isselect = {};
+  String challengeName = "";
 
   String _formatDate(DateTime date) {
     final DateFormat formatter = DateFormat('dd MMM yyyy');
@@ -147,37 +148,56 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                   Container(
                     margin: const EdgeInsets.all(10),
                     alignment: Alignment.center,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(20),
-                        border: Border.all(color: Colors.grey),
-                      ),
-                      child: DropdownButton<dynamic>(
-                        value: isselect["name"],
-                        hint: const Text("Selecciona un oponente"),
-                        alignment: Alignment.center,
-                        padding: const EdgeInsets.symmetric(horizontal: 20),
-                        borderRadius: BorderRadius.circular(20),
-                        items: oponnentsID
-                            .map(
-                              (value) => DropdownMenuItem(
-                                value: value,
-                                child: Center(child: Text(value["name"])),
-                              ),
-                            )
-                            .toList(),
-                        onChanged: (value) {
-                          final data = value as Map<String, dynamic>;
-                          setState(() {
-                            isselect.addAll(
-                              {
-                                "id": data['id'].toString(),
-                                "name": data['name'].toString(),
-                              },
-                            );
-                          });
-                        },
-                      ),
+                    child: Column(
+                      children: [
+                        DecoratedBox(
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(color: Colors.grey),
+                          ),
+                          child: DropdownButton<dynamic>(
+                            value: isselect["id"],
+                            hint: const Text("Selecciona un oponente"),
+                            alignment: Alignment.center,
+                            padding: const EdgeInsets.symmetric(horizontal: 20),
+                            borderRadius: BorderRadius.circular(20),
+                            items: oponnentsID
+                                .map(
+                                  (value) => DropdownMenuItem(
+                                    value: value["id"],
+                                    child: Center(child: Text(value["name"])),
+                                  ),
+                                )
+                                .toList(),
+                            onChanged: (value) {
+                              final selectedOpponent = oponnentsID.firstWhere((item) => item["id"] == value);
+                              setState(() {
+                                isselect.addAll(
+                                  {
+                                    "id": selectedOpponent['id'],
+                                    "name":  selectedOpponent['name'],
+                                  },
+                                );
+                              });
+                            },
+                          ),
+                        ),
+                        const SizedBox(height: 20),
+                        TextFormField(
+                          onChanged: (text) {
+                            setState(() {
+                              challengeName = text;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: "Nombre del Reto",
+                            hintText: "Escribe un nombre para el reto",
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 Row(
@@ -198,7 +218,7 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                               group: null,
                             ),
                           );
-                        } else if (isselect['id'] != null) {
+                        } else if (isselect['id'] != null && challengeName.isNotEmpty) {
                           homebloc.add(
                             HomeEvent.onAssignChallengesByType(
                               type: widget.challengesEntity.type.toString(),
@@ -209,8 +229,7 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                                 "challengeId": widget.challengesEntity.id,
                                 "startDate": widget.challengesEntity.startDate,
                                 "endDtae": widget.challengesEntity.endDate,
-                                "challengeText":
-                                    widget.challengesEntity.description,
+                                "challengeText": challengeName,
                               },
                             ),
                           );
@@ -230,7 +249,7 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                                   child: const Column(
                                     children: [
                                       Text("Message"),
-                                      Text("Selecciona a tu oponente")
+                                      Text("Selecciona a tu oponente y escribe un nombre para el reto")
                                     ],
                                   ),
                                 ),
