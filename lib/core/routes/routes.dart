@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 
 class Routes {
   static const auth = "/auth";
+  static const profile = "profile";
   static const register = "register-step1";
   static const register2 = "register-step2";
   static const home = "/home";

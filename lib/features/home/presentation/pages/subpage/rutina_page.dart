@@ -1,9 +1,15 @@
+import 'package:app_gym/core/helper/app_icons.dart';
+import 'package:app_gym/core/helper/app_images.dart';
+import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:app_gym/core/routes/routes.dart';
 import 'package:app_gym/features/home/domain/entities/rutina_entity.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
+import 'package:app_gym/features/home/presentation/widgets/item_rutine_widget.dart';
+import 'package:app_gym/features/home/presentation/widgets/item_workouts_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hexcolor/hexcolor.dart';
 
 class RutinaPage extends StatefulWidget {
   const RutinaPage({super.key});
@@ -23,19 +29,42 @@ class _RutinaPageState extends State<RutinaPage> {
   Widget build(BuildContext context) {
     final homebloc = context.read<HomeBloc>();
     return Container(
-      margin: const EdgeInsets.only(top: 20, left: 30, right: 30),
+      margin: const EdgeInsets.only(top: 20),
       decoration: const BoxDecoration(),
       child: SafeArea(
-        child: Column(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(bottom: 20),
-              child: const Text("Rutina"),
+        child: CustomScrollView(
+          slivers: [
+            SliverAppBar(
+              forceMaterialTransparency: true,
+              title: Text(
+                "Popular Workouts",
+                style: robotoMedium(fontSize: 18),
+              ),
             ),
-            Expanded(
-              child: BlocBuilder<HomeBloc, HomeState>(
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 187,
+                child: ListView.builder(
+                  itemCount: 20,
+                  scrollDirection: Axis.horizontal,
+                  itemBuilder: (context, index) {
+                    return ItemWorkouts(index: index);
+                  },
+                ),
+              ),
+            ),
+            SliverAppBar(
+              forceMaterialTransparency: true,
+              title: Text(
+                "Today Plan",
+                style: robotoMedium(fontSize: 18),
+              ),
+            ),
+            SliverPadding(
+              padding: const EdgeInsets.only(right: 14, left: 14),
+              sliver: BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
-                  return ListView.builder(
+                  return SliverList.builder(
                     itemCount: state.listrutine?.length,
                     itemBuilder: (context, index) {
                       return ItemRutina(
@@ -45,78 +74,9 @@ class _RutinaPageState extends State<RutinaPage> {
                   );
                 },
               ),
-            ),
+            )
           ],
         ),
-      ),
-    );
-  }
-}
-
-class ItemRutina extends StatelessWidget {
-  final RutinaEntity rutinaEntity;
-  const ItemRutina({
-    super.key,
-    required this.rutinaEntity,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 20),
-      decoration: const BoxDecoration(),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Padding(
-            padding: EdgeInsets.only(bottom: 20, left: 10),
-            child: Text("Lunes"),
-          ),
-          GestureDetector(
-            onTap: () {
-              context.pushNamed(Routes.exercise,
-                  extra: (rutinaEntity.name, rutinaEntity.exercises));
-            },
-            child: Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-                color: Colors.grey,
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(rutinaEntity.name ?? ""),
-                        Text(
-                          rutinaEntity.difficultyLevel != null
-                              ? rutinaEntity.difficultyLevel.toString()
-                              : "",
-                        ),
-                      ],
-                    ),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(rutinaEntity.goal ?? ""),
-                      Text(
-                        rutinaEntity.isCompleted != null &&
-                                rutinaEntity.isCompleted!
-                            ? "Completado"
-                            : "Pendiente",
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          )
-        ],
       ),
     );
   }

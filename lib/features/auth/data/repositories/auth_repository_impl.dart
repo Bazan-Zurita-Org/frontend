@@ -75,4 +75,10 @@ class AuthRepositoryImpl implements AuthRepositoryInterface {
   Future<List> getListUsersIdData() async {
     return await authDatasourceRemote.getListUsersIdData();
   }
+
+  @override
+  Future<UserEntity?> getSaveUserData() async {
+    final id = sharedPreferences.getString(AppConstants.id);
+    return authDatasourceRemote.getSaveUserEntityDataRemote(id!);
+  }
 }

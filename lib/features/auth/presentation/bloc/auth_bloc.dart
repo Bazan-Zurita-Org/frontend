@@ -7,6 +7,7 @@ import 'package:app_gym/features/auth/domain/usecases/authstatus/save_auth_statu
 import 'package:app_gym/features/auth/domain/usecases/token/get_id_user_use_case.dart';
 import 'package:app_gym/features/auth/domain/usecases/token/get_save_token_use_case.dart';
 import 'package:app_gym/features/auth/domain/usecases/token/save_token_use_case.dart';
+import 'package:app_gym/features/auth/domain/usecases/user/get_save_user_use_case.dart';
 import 'package:app_gym/features/auth/domain/usecases/user/save_user_use_case.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -17,6 +18,7 @@ part 'auth_event.dart';
 part 'auth_state.dart';
 
 class AuthBloc extends Bloc<AuthEvent, AuthState> {
+  final GetSaveUserUseCase getSaveUserUseCase;
   final SaveUserUseCase saveUserUseCase;
   final GetSaveAuthStatusUseCase getSaveAuthStatusUseCase;
   final GetSaveTokenUseCase getSaveTokenUseCase;
@@ -27,11 +29,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       this.getSaveTokenUseCase,
       this.getSaveAuthStatusUseCase,
       this.saveAuthStatusUseCase,
-      this.getIdUserUseCase)
+      this.getIdUserUseCase,
+      this.getSaveUserUseCase)
       : super(AuthState.initialState()) {
     on<_OnLoginWithEmail>(_onLoginWithEmail);
     on<_OnRegisterWithEmail>(_onRegisterWithEmail);
     on<_OnGetIdSaveUserData>(_onGetIdSaveUserData);
+    on<_OnGetSaveUserData>(_onGetSaveUserData);
   }
 
   final name = TextEditingController();
@@ -145,5 +149,11 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       _OnGetIdSaveUserData event, Emitter<AuthState> emit) async {
     final data = await getIdUserUseCase();
     emit(state.copyWith(idUser: data));
+  }
+
+  void _onGetSaveUserData(
+      _OnGetSaveUserData event, Emitter<AuthState> emit) async {
+    final data = await getSaveUserUseCase();
+    emit(state.copyWith(userEntity: data));
   }
 }

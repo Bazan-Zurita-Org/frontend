@@ -11,6 +11,7 @@ abstract class ChallengesDatasourceRemote {
       {required String type,
       required (String traineeld, String challengeId)? body,
       required Map<String, dynamic>? groud});
+  Future<void> challengesComplet(String id);
 }
 
 class ChallengesDatasourceRemoteImpl implements ChallengesDatasourceRemote {
@@ -65,6 +66,21 @@ class ChallengesDatasourceRemoteImpl implements ChallengesDatasourceRemote {
     } catch (e) {
       debugPrint("El error al asignar es $e");
       return null;
+    }
+  }
+
+  @override
+  Future<void> challengesComplet(String id) async {
+    try {
+      final data = await apiClientRepository.postData(
+        AppConstants.challengesComplete,
+        {"traineeChallengeId": id},
+      );
+      if (data.statusCode == 200) {
+        debugPrint("la respuesta es ${data.data}");
+      }
+    } catch (e) {
+      debugPrint("el error es $e");
     }
   }
 }

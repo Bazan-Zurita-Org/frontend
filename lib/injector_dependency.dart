@@ -15,16 +15,21 @@ import 'package:app_gym/features/auth/domain/usecases/user/get_save_user_use_cas
 import 'package:app_gym/features/auth/domain/usecases/user/save_user_use_case.dart';
 import 'package:app_gym/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_gym/features/home/data/datasources/challenges_datasource_remote.dart';
+import 'package:app_gym/features/home/data/datasources/duels_datasource_remote.dart';
 import 'package:app_gym/features/home/data/datasources/ranking_datasource_remote.dart';
 import 'package:app_gym/features/home/data/datasources/rutine_datasource_remote.dart';
 import 'package:app_gym/features/home/data/repositories/challenges_repository_impl.dart';
+import 'package:app_gym/features/home/data/repositories/duels_repository_impl.dart';
 import 'package:app_gym/features/home/data/repositories/ranking_repository_impl.dart';
 import 'package:app_gym/features/home/data/repositories/rutine_repository_impl.dart';
 import 'package:app_gym/features/home/domain/repositories/challenges_repository_interface.dart';
+import 'package:app_gym/features/home/domain/repositories/duels_repository_interface.dart';
 import 'package:app_gym/features/home/domain/repositories/ranking_repository_interface.dart';
 import 'package:app_gym/features/home/domain/repositories/rutine_repository_interface.dart';
 import 'package:app_gym/features/home/domain/usecases/challenges/assign_challenges_by_type_use_case.dart';
+import 'package:app_gym/features/home/domain/usecases/challenges/challenges_complet_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/challenges/get_save_list_challenges_use_case.dart';
+import 'package:app_gym/features/home/domain/usecases/duels/get_save_list_duels_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/rankig/get_save_list_ranking_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/rutine/get_save_list_rutine_use_case.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
@@ -65,6 +70,12 @@ Future<void> injectorDependenCy() async {
       sharedPreferences: sharedPreferences,
     ),
   );
+  sl.registerLazySingleton<DuelsDatasourceRemote>(
+    () => DuelsDatasourceRemoteImpl(
+      apiClientRepository: sl(),
+      sharedPreferences: sharedPreferences,
+    ),
+  );
 
   //repository
   sl.registerLazySingleton<AuthRepositoryInterface>(
@@ -86,6 +97,11 @@ Future<void> injectorDependenCy() async {
   sl.registerLazySingleton<ChallengesRepositoryInterface>(
     () => ChallengesRepositoryImpl(
       challengesDatasourceRemote: sl(),
+    ),
+  );
+  sl.registerLazySingleton<DuelsRepositoryInterface>(
+    () => DuelsRepositoryImpl(
+      duelsDatasourceRemote: sl(),
     ),
   );
 
@@ -110,7 +126,9 @@ Future<void> injectorDependenCy() async {
   ///
   ///-------> user
   sl.registerLazySingleton<GetSaveUserUseCase>(
-    () => GetSaveUserUseCase(),
+    () => GetSaveUserUseCase(
+      authRepositoryInterface: sl(),
+    ),
   );
   sl.registerLazySingleton<SaveUserUseCase>(
     () => SaveUserUseCase(
@@ -164,6 +182,19 @@ Future<void> injectorDependenCy() async {
       challengesRepositoryInterface: sl(),
     ),
   );
+  sl.registerLazySingleton<ChallengesCompletUseCase>(
+    () => ChallengesCompletUseCase(
+      challengesRepositoryInterface: sl(),
+    ),
+  );
+
+  ///
+  ///---------> duels
+  sl.registerLazySingleton<GetSaveListDuelsUseCase>(
+    () => GetSaveListDuelsUseCase(
+      duelsRepositoryInterface: sl(),
+    ),
+  );
 
   ///
 
@@ -180,10 +211,13 @@ Future<void> injectorDependenCy() async {
       sl(),
       sl(),
       sl(),
+      sl(),
     ),
   );
   sl.registerFactory<HomeBloc>(
     () => HomeBloc(
+      sl(),
+      sl(),
       sl(),
       sl(),
       sl(),

@@ -7,12 +7,14 @@ class HomeState extends Equatable {
   final List<RutinaEntity>? listrutine;
   final List<RanKingEntity>? listranking;
   final List<ChallengesEntity>? listchallenges;
+  final List<DuelsEntity>? listduels;
   final AssignChallengesStatus? assignChallengesStatus;
   const HomeState({
     this.indexpage,
     this.listrutine,
     this.listranking,
     this.listchallenges,
+    this.listduels,
     this.assignChallengesStatus,
   });
 
@@ -21,6 +23,7 @@ class HomeState extends Equatable {
         listrutine: [],
         listranking: [],
         listchallenges: [],
+        listduels: [],
         assignChallengesStatus: AssignChallengesStatus.init,
       );
 
@@ -29,6 +32,7 @@ class HomeState extends Equatable {
     List<RutinaEntity>? listrutine,
     List<RanKingEntity>? listranking,
     List<ChallengesEntity>? listchallenges,
+    List<DuelsEntity>? listduels,
     AssignChallengesStatus? assignChallengesStatus,
   }) {
     return HomeState(
@@ -36,6 +40,7 @@ class HomeState extends Equatable {
       listrutine: listrutine ?? this.listrutine,
       listranking: listranking ?? this.listranking,
       listchallenges: listchallenges ?? this.listchallenges,
+      listduels: listduels ?? this.listduels,
       assignChallengesStatus:
           assignChallengesStatus ?? this.assignChallengesStatus,
     );
@@ -48,5 +53,6 @@ class HomeState extends Equatable {
         listranking,
         listchallenges,
         assignChallengesStatus,
+        listduels,
       ];
 }

@@ -1,17 +1,11 @@
-
-
 class RanKingEntity {
   final String? id;
-  final String? firstName;
-  final String? lastName;
+  final String? name;
   final int? points;
 
   RanKingEntity({
     required this.id,
-    required this.firstName,
-    required this.lastName,
+    required this.name,
     required this.points,
   });
-
-  
 }

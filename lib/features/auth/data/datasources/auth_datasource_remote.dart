@@ -10,6 +10,7 @@ abstract class AuthDatasourceRemote {
       {required String email, required String password});
   Future<String?> authRegisterWithEmail({required UserEntity userEntity});
   Future<List<dynamic>> getListUsersIdData();
+  Future<UserEntity?> getSaveUserEntityDataRemote(String id);
 }
 
 class AuthDatasourceRemoteImpl implements AuthDatasourceRemote {
@@ -73,6 +74,22 @@ class AuthDatasourceRemoteImpl implements AuthDatasourceRemote {
     } catch (e) {
       debugPrint("El error es $e");
       return [];
+    }
+  }
+
+  @override
+  Future<UserEntity?> getSaveUserEntityDataRemote(String id) async {
+    try {
+      final data = await apiClientRepository.getData(
+        AppConstants.userforId(id),
+      );
+      if (data.statusCode == 200) {
+        return UserModel.fromJson(data.data);
+      }
+      return null;
+    } catch (e) {
+      debugPrint("El error es $e");
+      return null;
     }
   }
 }
