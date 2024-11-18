@@ -6,4 +6,5 @@ abstract class ChallengesRepositoryInterface {
       {required String type,
       required (String traineeld, String challengeId)? body,
       required Map<String, dynamic>? groud});
+  Future<void> challengesComplet(String id);
 }

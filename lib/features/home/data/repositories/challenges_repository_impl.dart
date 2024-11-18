@@ -22,4 +22,9 @@ class ChallengesRepositoryImpl implements ChallengesRepositoryInterface {
       groud: groud,
     );
   }
+
+  @override
+  Future<void> challengesComplet(String id) async {
+    return await challengesDatasourceRemote.challengesComplet(id);
+  }
 }

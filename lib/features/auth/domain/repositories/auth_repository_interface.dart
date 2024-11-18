@@ -9,4 +9,5 @@ abstract class AuthRepositoryInterface {
   Future<void> authSaveAuthStatus({required String authStatus});
   Future<String?> getSaveIdUserData();
   Future<List<dynamic>> getListUsersIdData();
+  Future<UserEntity?> getSaveUserData();
 }

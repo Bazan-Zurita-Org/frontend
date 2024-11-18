@@ -1,3 +1,4 @@
+import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:app_gym/features/home/domain/entities/rankings_entity.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,13 @@ class _RankingsPageState extends State<RankingsPage> {
           children: [
             Padding(
               padding: const EdgeInsets.only(bottom: 20),
-              child: const Text("Ranking Oficiales"),
+              child: Text(
+                "Ranking Oficiales",
+                style: robotoBold(
+                  fontSize: 24,
+                  color: Colors.white,
+                ),
+              ),
             ),
             Expanded(
               child: BlocBuilder<HomeBloc, HomeState>(
@@ -64,9 +71,28 @@ class _ItemRankingState extends State<ItemRanking> {
   @override
   Widget build(BuildContext context) {
     return ListTile(
-      leading: CircleAvatar(),
-      title: Text("data"),
-      trailing: Text("data"),
+      leading: const CircleAvatar(
+        child: Icon(
+          Icons.person,
+          color: Colors.black,
+        ),
+      ),
+      title: Text(
+        "${widget.ranKingEntity.name}",
+        style: robotoRegular(
+          color: Colors.white,
+          fontSize: 16,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      trailing: Text(
+        widget.ranKingEntity.points.toString(),
+        style: robotoRegular(
+          fontSize: 14,
+          color: Colors.white,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
     );
   }
 }

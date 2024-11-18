@@ -6,6 +6,9 @@ abstract class HomeEvent extends Equatable {
   factory HomeEvent.onGetListRutine() => _OnGetListRutine();
   factory HomeEvent.onGetListRanking() => _OnGetListRanking();
   factory HomeEvent.onGetListChallenges() => _OnGetListChallenges();
+  factory HomeEvent.onGetListDuels() => _OnGetListDuels();
+  factory HomeEvent.onChallengesComplet({required String id}) =>
+      _OnChallengesComplet(id: id);
   factory HomeEvent.onAssignChallengesByType({
     required String type,
     required (String, String)? body,
@@ -15,6 +18,29 @@ abstract class HomeEvent extends Equatable {
 
   @override
   List<Object?> get props => [];
+}
+
+class _OnChallengesComplet implements HomeEvent {
+  final String id;
+
+  _OnChallengesComplet({required this.id});
+  @override
+  // TODO: implement props
+  List<Object?> get props => [id];
+
+  @override
+  // TODO: implement stringify
+  bool? get stringify => throw UnimplementedError();
+}
+
+class _OnGetListDuels implements HomeEvent {
+  @override
+  // TODO: implement props
+  List<Object?> get props => throw UnimplementedError();
+
+  @override
+  // TODO: implement stringify
+  bool? get stringify => throw UnimplementedError();
 }
 
 class _OnAssignChallengesByType implements HomeEvent {

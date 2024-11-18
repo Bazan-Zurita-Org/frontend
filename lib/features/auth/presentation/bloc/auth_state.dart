@@ -8,7 +8,13 @@ class AuthState extends Equatable {
   final LoginStatus? loginStatus;
   final RegisterStatus? registerStatus;
   final String? idUser;
-  const AuthState({this.loginStatus, this.registerStatus, this.idUser});
+  final UserEntity? userEntity;
+  const AuthState({
+    this.loginStatus,
+    this.registerStatus,
+    this.idUser,
+    this.userEntity,
+  });
 
   factory AuthState.initialState() => const AuthState(
         loginStatus: LoginStatus.init,
@@ -19,14 +25,16 @@ class AuthState extends Equatable {
     LoginStatus? loginStatus,
     RegisterStatus? registerStatus,
     String? idUser,
+    UserEntity? userEntity,
   }) {
     return AuthState(
       loginStatus: loginStatus ?? this.loginStatus,
       registerStatus: registerStatus ?? this.registerStatus,
       idUser: idUser ?? this.idUser,
+      userEntity: userEntity ?? this.userEntity,
     );
   }
 
   @override
-  List<Object?> get props => [loginStatus, registerStatus, idUser];
+  List<Object?> get props => [loginStatus, registerStatus, idUser, userEntity];
 }

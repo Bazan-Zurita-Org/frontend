@@ -20,6 +20,7 @@ class RankingDatasourceRemoteImpl implements RankingDatasourceRemote {
   Future<List<RanKingEntity>> getListRankingDataRemote() async {
     try {
       final data = await apiClientRepository.getData(AppConstants.rankings);
+      debugPrint("la data es $data");
       debugPrint("Los datos del ranking son $data");
       if (data.statusCode == 200) {
         final result = (data.data as List<dynamic>)
