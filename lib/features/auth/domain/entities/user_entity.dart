@@ -5,13 +5,13 @@ class UserEntity extends Equatable {
   final String? lastName;
   final String? email;
   final String? password;
-  final int? height;
-  final int? weight;
+  final double? height;
+  final double? weight;
   final String? gender;
   final DateTime? dateOfBirth;
   final String? phone;
   final String? fitnessGoal;
-  final int? targetWeigth;
+  final double? targetWeigth;
 
   const UserEntity(
       {required this.firstName,

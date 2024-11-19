@@ -83,13 +83,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         lastName: lastname.text,
         email: email.text,
         password: password.text,
-        height: int.tryParse(height.text),
-        weight: int.tryParse(weight.text),
+        height: double.tryParse(height.text),
+        weight: double.tryParse(weight.text),
         gender: genre.text,
         dateOfBirth: _parseDate(birthdate.text),
         phone: phone.text,
         fitnessGoal: physicalobjective.text,
-        targetWeigth: int.tryParse(targetweight.text),
+        targetWeigth: double.tryParse(targetweight.text),
       ),
     );
     if (data != null) {

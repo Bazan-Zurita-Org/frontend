@@ -95,8 +95,6 @@ class _ItemWeeklyState extends State<ItemWeekly> {
     });
   }
 
-  String? challengeName;
-
   @override
   Widget build(BuildContext context) {
     final homebloc = context.read<HomeBloc>();
