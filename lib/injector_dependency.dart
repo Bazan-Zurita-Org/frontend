@@ -15,14 +15,17 @@ import 'package:app_gym/features/auth/domain/usecases/user/get_save_user_use_cas
 import 'package:app_gym/features/auth/domain/usecases/user/save_user_use_case.dart';
 import 'package:app_gym/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_gym/features/home/data/datasources/challenges_datasource_remote.dart';
+import 'package:app_gym/features/home/data/datasources/diet_remote_datasource.dart';
 import 'package:app_gym/features/home/data/datasources/duels_datasource_remote.dart';
 import 'package:app_gym/features/home/data/datasources/ranking_datasource_remote.dart';
 import 'package:app_gym/features/home/data/datasources/rutine_datasource_remote.dart';
 import 'package:app_gym/features/home/data/repositories/challenges_repository_impl.dart';
+import 'package:app_gym/features/home/data/repositories/diet_repository_impl.dart';
 import 'package:app_gym/features/home/data/repositories/duels_repository_impl.dart';
 import 'package:app_gym/features/home/data/repositories/ranking_repository_impl.dart';
 import 'package:app_gym/features/home/data/repositories/rutine_repository_impl.dart';
 import 'package:app_gym/features/home/domain/repositories/challenges_repository_interface.dart';
+import 'package:app_gym/features/home/domain/repositories/diet_repository_interface.dart';
 import 'package:app_gym/features/home/domain/repositories/duels_repository_interface.dart';
 import 'package:app_gym/features/home/domain/repositories/ranking_repository_interface.dart';
 import 'package:app_gym/features/home/domain/repositories/rutine_repository_interface.dart';
@@ -30,8 +33,10 @@ import 'package:app_gym/features/home/domain/usecases/challenges/assign_challeng
 import 'package:app_gym/features/home/domain/usecases/challenges/challenges_complet_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/challenges/get_save_list_challenges_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/duels/get_save_list_duels_use_case.dart';
+import 'package:app_gym/features/home/domain/usecases/get_diet_list_usecase.dart';
 import 'package:app_gym/features/home/domain/usecases/rankig/get_save_list_ranking_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/rutine/get_save_list_rutine_use_case.dart';
+import 'package:app_gym/features/home/presentation/bloc/diet/diet_bloc.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
 import 'package:get_it/get_it.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -45,6 +50,12 @@ Future<void> injectorDependenCy() async {
     () => ApiClient(
       sharedPreferences: sharedPreferences,
       baseUrl: AppConstants.baseUrl,
+    ),
+  );
+  sl.registerLazySingleton<DietDatasourceRemote>(
+    () => DietDatasourceRemoteImpl(
+      apiClientRepository: sl(),
+      sharedPreferences: sharedPreferences,
     ),
   );
   sl.registerLazySingleton<AuthDatasourceRemote>(
@@ -78,6 +89,11 @@ Future<void> injectorDependenCy() async {
   );
 
   //repository
+  sl.registerLazySingleton<DietRepositoryInterface>(
+    () => DietRepositoryImpl(
+      dietDatasourceRemote: sl(),
+    ),
+  );
   sl.registerLazySingleton<AuthRepositoryInterface>(
     () => AuthRepositoryImpl(
       sl(),
@@ -107,6 +123,9 @@ Future<void> injectorDependenCy() async {
 
   //usecase
   /// -----> Token
+  sl.registerLazySingleton<GetSaveListDietsUseCase>(
+    () => GetSaveListDietsUseCase(sl()),
+  );
   sl.registerLazySingleton<SaveTokenUseCase>(
     () => SaveTokenUseCase(
       authRepositoryInterface: sl(),
@@ -199,6 +218,11 @@ Future<void> injectorDependenCy() async {
   ///
 
   //bloc
+  sl.registerFactory<DietBloc>(
+    () => DietBloc(
+      sl(),
+    ),
+  );
   sl.registerFactory<RoutesBloc>(
     () => RoutesBloc(
       sl(),

@@ -5,6 +5,7 @@ abstract class AuthEvent extends Equatable {
   factory AuthEvent.onRegisterWithEmail() => _OnRegisterWithEmail();
   factory AuthEvent.onGetIdSaveUserData() => _OnGetIdSaveUserData();
   factory AuthEvent.onGetSaveUserData() => _OnGetSaveUserData();
+  factory AuthEvent.onLogout() => _OnLogout();
 
   @override
   List<Object?> get props => [];
@@ -48,4 +49,12 @@ class _OnLoginWithEmail implements AuthEvent {
   @override
   // TODO: implement stringify
   bool? get stringify => throw UnimplementedError();
+}
+
+class _OnLogout implements AuthEvent {
+  @override
+  List<Object?> get props => [];
+
+  @override
+  bool? get stringify => false;
 }

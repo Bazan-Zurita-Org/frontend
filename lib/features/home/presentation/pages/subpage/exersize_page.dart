@@ -3,7 +3,9 @@ import 'dart:ui';
 import 'package:app_gym/core/helper/app_images.dart';
 import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:app_gym/features/home/domain/entities/rutina_entity.dart';
+import 'package:app_gym/features/shared/widgets/dialog/workout_description_dialog.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -85,7 +87,7 @@ class _ExersizePageState extends State<ExersizePage> {
                   forceMaterialTransparency: true,
                   automaticallyImplyLeading: false,
                   title: Text(
-                    "Rounds",
+                    "Ejercicios",
                     style: robotoBold(
                       color: Colors.white,
                       fontSize: 20,
@@ -134,24 +136,86 @@ class _ExersizePageState extends State<ExersizePage> {
                           widget.exerciseEntity[index].name ?? "",
                           style: robotoMedium(
                             color: Colors.white,
-                            fontSize: 16,
+                            fontSize: 16.sp,
                           ),
                         ),
                         subtitle: Text(
                           widget.exerciseEntity[index].restTime ?? "",
                           style: robotoRegular(
-                            fontSize: 13,
+                            fontSize: 13.sp,
                             color: Colors.white.withOpacity(0.5),
                           ),
                         ),
                         trailing: GestureDetector(
-                          onTap: () {},
+                          onTap: () {
+                            final exercise = widget.exerciseEntity[index];
+                            WorkoutDescriptionDialog(
+                              title: exercise.name ?? "",
+                              widgetDescription: Column(
+                                children: [
+                                  RichText(
+                                    text: TextSpan(
+                                      style: DefaultTextStyle.of(context)
+                                          .style
+                                          .copyWith(
+                                            fontSize: 13.sp,
+                                            color: Colors.black,
+                                          ),
+                                      children: [
+                                        const TextSpan(
+                                          text: 'Sets: ',
+                                          style: TextStyle(
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
+                                        TextSpan(text: '${exercise.sets}\n'),
+                                        const TextSpan(
+                                          text: 'Reps: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(text: '${exercise.reps}\n'),
+                                        const TextSpan(
+                                          text: 'Rest Time: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(
+                                            text: '${exercise.restTime}\n'),
+                                        const TextSpan(
+                                          text: 'Equipment: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(
+                                            text: '${exercise.equipment}\n'),
+                                        const TextSpan(
+                                          text: 'Muscle Group: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(
+                                            text: '${exercise.muscleGroup}\n'),
+                                        const TextSpan(
+                                          text: 'Instructions: ',
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                        TextSpan(
+                                            text: '${exercise.instructions}\n'),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ).show(context);
+                          },
                           child: CircleAvatar(
-                            radius: 18,
+                            radius: 18.r,
                             backgroundColor: HexColor("#192126"),
                             child: Icon(
                               Icons.play_arrow,
-                              size: 20,
+                              size: 20.w,
                               color: HexColor("#3899DE"),
                             ),
                           ),
@@ -179,30 +243,30 @@ class _ExersizePageState extends State<ExersizePage> {
               ],
             ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 34, vertical: 18),
-              child: ElevatedButton(
-                onPressed: () {},
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: HexColor("#3899DE"),
-                  minimumSize: Size(
-                    MediaQuery.sizeOf(context).width,
-                    50,
-                  ),
-                ),
-                child: Text(
-                  "Lets Workout",
-                  style: robotoMedium(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 16,
-                    color: HexColor("#192126"),
-                  ),
-                ),
-              ),
-            ),
-          )
+          // Align(
+          //   alignment: Alignment.bottomCenter,
+          //   child: Padding(
+          //     padding: const EdgeInsets.symmetric(horizontal: 34, vertical: 18),
+          //     child: ElevatedButton(
+          //       onPressed: () {},
+          //       style: ElevatedButton.styleFrom(
+          //         backgroundColor: HexColor("#3899DE"),
+          //         minimumSize: Size(
+          //           MediaQuery.sizeOf(context).width,
+          //           50,
+          //         ),
+          //       ),
+          //       child: Text(
+          //         "Lets Workout",
+          //         style: robotoMedium(
+          //           fontWeight: FontWeight.w600,
+          //           fontSize: 16,
+          //           color: HexColor("#192126"),
+          //         ),
+          //       ),
+          //     ),
+          //   ),
+          // )
         ],
       ),
     );

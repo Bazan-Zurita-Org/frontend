@@ -36,6 +36,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
     on<_OnRegisterWithEmail>(_onRegisterWithEmail);
     on<_OnGetIdSaveUserData>(_onGetIdSaveUserData);
     on<_OnGetSaveUserData>(_onGetSaveUserData);
+    on<_OnLogout>(_onLogout);
   }
 
   final name = TextEditingController();
@@ -53,6 +54,13 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
   final registerkeyform = GlobalKey<FormState>();
   final register2keyform = GlobalKey<FormState>();
 
+  void _onLogout(_OnLogout event, Emitter<AuthState> emit) async {
+    emit(state.copyWith(
+      loginStatus: LoginStatus.init,
+      registerStatus: RegisterStatus.init,
+    ));
+  }
+
   void _onLoginWithEmail(
       _OnLoginWithEmail event, Emitter<AuthState> emit) async {
     try {
@@ -63,11 +71,12 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         await saveAuthStatusUseCase(params: AuthStatus.authenticated.name);
 
         emit(state.copyWith(loginStatus: LoginStatus.success, idUser: data.$2));
-        disposeControllers();
+        // disposeControllers();
+        clearControllers();
       } else {
         emit(state.copyWith(loginStatus: LoginStatus.failed));
       }
-      debugPrint("El estado es ${state.loginStatus}");
+      debugPrint("SB - El estado es ${state.loginStatus}");
       emit(state.copyWith(loginStatus: LoginStatus.init));
     } catch (e) {
       debugPrint("El error es $e");
@@ -90,6 +99,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         phone: phone.text,
         fitnessGoal: physicalobjective.text,
         targetWeigth: double.tryParse(targetweight.text),
+        points: 0,
       ),
     );
     if (data != null) {
@@ -98,7 +108,7 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       emit(state.copyWith(registerStatus: RegisterStatus.failed));
     }
     clearControllers();
-    disposeControllers();
+    // disposeControllers();
     emit(state.copyWith(registerStatus: RegisterStatus.init));
   }
 

@@ -13,6 +13,7 @@ import 'package:app_gym/features/home/domain/usecases/duels/get_save_list_duels_
 import 'package:app_gym/features/home/domain/usecases/rankig/get_save_list_ranking_use_case.dart';
 import 'package:app_gym/features/home/domain/usecases/rutine/get_save_list_rutine_use_case.dart';
 import 'package:app_gym/features/home/presentation/pages/subpage/duels_page.dart';
+import 'package:app_gym/features/home/presentation/pages/subpage/my_diets_page.dart';
 import 'package:app_gym/features/home/presentation/pages/subpage/rankings_page.dart';
 import 'package:app_gym/features/home/presentation/pages/subpage/rutina_page.dart';
 import 'package:app_gym/features/home/presentation/pages/subpage/weekly_challenge_page.dart';
@@ -64,14 +65,11 @@ class HomeBloc extends Bloc<HomeEvent, HomeState> {
       page: const WeeklyChallengePage(),
       // page: const WeeklyChallengePage(),
     ),
-    // PageModel(
-    //   title: "My Profile",
-    //   icons: const Icon(
-    //     Icons.person_outline_sharp,
-    //     color: Colors.white,
-    //   ),
-    //   page: const ProfileUserPage(),
-    // ),
+    PageModel(
+      title: "Mis Dietas",
+      icons: const Icon(Icons.health_and_safety, color: Colors.white),
+      page: const MyDietsPage(),
+    ),
     PageModel(
       title: "Rankings",
       icons: const Icon(

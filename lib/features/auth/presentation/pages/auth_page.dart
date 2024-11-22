@@ -8,6 +8,7 @@ import 'package:app_gym/features/auth/presentation/widgets/input_custom_auth.dar
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -64,15 +65,7 @@ class _AuthPageState extends State<AuthPage> {
           height: MediaQuery.sizeOf(context).height,
           padding: const EdgeInsets.symmetric(horizontal: 50),
           decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.centerLeft,
-              end: Alignment.centerRight,
-              colors: [
-                HexColor("#65AED8"),
-                HexColor("#8897DA"),
-                HexColor("#8F88E9"),
-              ],
-            ),
+            color: HexColor("#384046"),
           ),
           child: SingleChildScrollView(
             child: Column(
@@ -80,7 +73,7 @@ class _AuthPageState extends State<AuthPage> {
               children: [
                 SafeArea(child: Image.asset(AppImages.logo)),
                 Container(
-                  padding: EdgeInsets.all(20),
+                  padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(20),
@@ -96,7 +89,7 @@ class _AuthPageState extends State<AuthPage> {
                           "Login",
                           style: robotoMedium(
                             fontWeight: FontWeight.w600,
-                            fontSize: 30,
+                            fontSize: 28.sp,
                           ),
                         ),
                         InputCustomAuth(
@@ -108,16 +101,17 @@ class _AuthPageState extends State<AuthPage> {
                           ispassword: true,
                           label: 'Password',
                         ),
+                        SizedBox(height: 15.h),
                         ButtonCustomAuth(
                           color: Colors.blue,
                           onPressed: () {
                             // if (authbloc.keyform.currentState!.validate()) {
-
                             // }
                             authbloc.add(AuthEvent.onLoginWithEmail());
                           },
                           label: "Login",
                         ),
+                        SizedBox(height: 10.h),
                         GestureDetector(
                           onTap: () {
                             context.goNamed(Routes.register);

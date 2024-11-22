@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:app_gym/core/api/api_client_repository.dart';
 import 'package:app_gym/core/helper/app_constants.dart';
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ApiClient implements ApiClientRepository {

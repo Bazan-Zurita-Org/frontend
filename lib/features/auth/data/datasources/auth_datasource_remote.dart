@@ -80,11 +80,15 @@ class AuthDatasourceRemoteImpl implements AuthDatasourceRemote {
   @override
   Future<UserEntity?> getSaveUserEntityDataRemote(String id) async {
     try {
+      print('SB - El id es $id');
       final data = await apiClientRepository.getData(
         AppConstants.userforId(id),
       );
+      print('SB - El data es ${data.data}');
       if (data.statusCode == 200) {
-        return UserModel.fromJson(data.data);
+        final user = UserModel.fromJson(data.data);
+        print('SB - El user es $user');
+        return user;
       }
       return null;
     } catch (e) {

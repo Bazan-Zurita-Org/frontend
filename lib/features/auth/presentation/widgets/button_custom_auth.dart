@@ -1,5 +1,5 @@
-import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ButtonCustomAuth extends StatelessWidget {
   final VoidCallback onPressed;
@@ -14,21 +14,27 @@ class ButtonCustomAuth extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 15),
-      child: ElevatedButton(
+    final ButtonStyle flatButtonStyle = TextButton.styleFrom(
+      padding: EdgeInsets.symmetric(horizontal: 8.w),
+      textStyle: TextStyle(fontSize: 16.sp, fontWeight: FontWeight.w500),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.all(Radius.circular(20.r)),
+        side: BorderSide(
+          color: color ?? Colors.grey,
+        ),
+      ),
+      disabledBackgroundColor: Colors.grey,
+      disabledForegroundColor: color ?? Theme.of(context).colorScheme.onSurface,
+      backgroundColor: color ?? Theme.of(context).colorScheme.primary,
+    );
+
+    return SizedBox(
+      height: 42.h,
+      width: double.maxFinite,
+      child: TextButton(
+        style: flatButtonStyle,
         onPressed: onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: color,
-          minimumSize: Size(MediaQuery.sizeOf(context).width, 50),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-        ),
-        child: Text(
-          label,
-          style: robotoBold(color: Colors.white, fontSize: 20),
-        ),
+        child: Text(label, style: const TextStyle(color: Colors.white)),
       ),
     );
   }

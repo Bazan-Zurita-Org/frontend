@@ -18,23 +18,32 @@ class UserModel extends UserEntity {
       required super.dateOfBirth,
       required super.phone,
       required super.fitnessGoal,
-      required super.targetWeigth});
+      required super.targetWeigth,
+      required super.points});
 
-  factory UserModel.fromJson(Map<String, dynamic> json) => UserModel(
-        firstName: json["firstName"],
-        lastName: json["lastName"],
-        email: json["email"],
-        password: json["password"],
-        height: json["height"],
-        weight: json["weight"],
-        gender: json["gender"],
-        dateOfBirth: json["dateOfBirth"] == null
-            ? null
-            : DateTime.parse(json["dateOfBirth"]),
-        phone: json["phone"],
-        fitnessGoal: json["fitnessGoal"],
-        targetWeigth: json["targetWeigth"],
-      );
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    print('SB - points: ${json["points"].runtimeType}');
+    print('SB - height: ${json["height"].runtimeType}');
+    print('SB - weight: ${json["weight"].runtimeType}');
+    print('SB - targetWeigth: ${json["targetWeigth"].runtimeType}');
+    return UserModel(
+      firstName: json["firstName"],
+      lastName: json["lastName"],
+      email: json["email"],
+      password: json["password"] ?? '',
+      height: json["height"] ?? 0.0,
+      weight: json["weight"] ?? 0.0,
+      gender: json["gender"] ?? '',
+      dateOfBirth: json["dateOfBirth"] == null
+          ? null
+          : DateTime.tryParse(json["dateOfBirth"]),
+      phone: json["phone"] ?? 0,
+      fitnessGoal: json["fitnessGoal"] ?? '',
+      targetWeigth: json["targetWeigth"] / 1.0 ?? 0.0,
+      points: json["points"] ?? 0,
+    );
+  }
+
   factory UserModel.fromEntity(UserEntity userEntity) => UserModel(
         firstName: userEntity.firstName,
         lastName: userEntity.lastName,
@@ -47,6 +56,7 @@ class UserModel extends UserEntity {
         phone: userEntity.phone,
         fitnessGoal: userEntity.fitnessGoal,
         targetWeigth: userEntity.targetWeigth,
+        points: userEntity.points,
       );
 
   Map<String, dynamic> toJson() => {
@@ -62,5 +72,6 @@ class UserModel extends UserEntity {
         "phone": phone,
         "fitnessGoal": fitnessGoal,
         "targetWeigth": targetWeigth,
+        "points": points,
       };
 }

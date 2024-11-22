@@ -8,6 +8,7 @@ import 'package:app_gym/features/home/presentation/widgets/item_rutine_widget.da
 import 'package:app_gym/features/home/presentation/widgets/item_workouts_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hexcolor/hexcolor.dart';
 
@@ -38,12 +39,12 @@ class _RutinaPageState extends State<RutinaPage> {
               forceMaterialTransparency: true,
               title: Text(
                 "Popular Workouts",
-                style: robotoMedium(fontSize: 18),
+                style: robotoMedium(fontSize: 18.sp),
               ),
             ),
             SliverToBoxAdapter(
               child: SizedBox(
-                height: 187,
+                height: 177.h,
                 child: ListView.builder(
                   itemCount: 20,
                   scrollDirection: Axis.horizontal,
@@ -57,7 +58,7 @@ class _RutinaPageState extends State<RutinaPage> {
               forceMaterialTransparency: true,
               title: Text(
                 "Today Plan",
-                style: robotoMedium(fontSize: 18),
+                style: robotoMedium(fontSize: 18.sp),
               ),
             ),
             SliverPadding(

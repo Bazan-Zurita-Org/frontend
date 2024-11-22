@@ -73,8 +73,8 @@ class ChallengesDatasourceRemoteImpl implements ChallengesDatasourceRemote {
   Future<void> challengesComplet(String id) async {
     try {
       final data = await apiClientRepository.postData(
-        AppConstants.challengesComplete,
-        {"traineeChallengeId": id},
+        AppConstants.duelsaccept,
+        {"duelId": id},
       );
       if (data.statusCode == 200) {
         debugPrint("la respuesta es ${data.data}");

@@ -3,10 +3,14 @@ import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:app_gym/features/auth/domain/usecases/user/get_list_user_id_use_case.dart';
 import 'package:app_gym/features/auth/presentation/bloc/auth_bloc.dart';
 import 'package:app_gym/features/home/domain/entities/challenges_entity.dart';
+import 'package:app_gym/features/home/presentation/bloc/duel_selector/duel_selected_cubit.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
+import 'package:app_gym/features/shared/widgets/dialog/success_dialog.dart';
+import 'package:app_gym/injectable.dart';
 import 'package:app_gym/injector_dependency.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:hexcolor/hexcolor.dart';
 import 'package:intl/intl.dart';
 
@@ -17,11 +21,18 @@ class WeeklyChallengePage extends StatefulWidget {
   State<WeeklyChallengePage> createState() => _WeeklyChallengePageState();
 }
 
+Map<String, dynamic>? isselect;
+
 class _WeeklyChallengePageState extends State<WeeklyChallengePage> {
   @override
   void initState() {
     context.read<HomeBloc>().add(HomeEvent.onGetListChallenges());
     super.initState();
+  }
+
+  void _updateParentState(Map<String, String>? selected) {
+    isselect = selected;
+    setState(() {});
   }
 
   @override
@@ -32,10 +43,6 @@ class _WeeklyChallengePageState extends State<WeeklyChallengePage> {
       child: SafeArea(
         child: Column(
           children: [
-            const Padding(
-              padding: EdgeInsets.only(bottom: 20),
-              child: Text("Retos Semanales"),
-            ),
             Expanded(
               child: BlocBuilder<HomeBloc, HomeState>(
                 builder: (context, state) {
@@ -44,9 +51,11 @@ class _WeeklyChallengePageState extends State<WeeklyChallengePage> {
                     itemBuilder: (context, index) {
                       final data = state.listchallenges![index];
                       return Padding(
-                        padding: const EdgeInsets.only(bottom: 20),
+                        padding: EdgeInsets.only(bottom: 15.w),
                         child: ItemWeekly(
                           challengesEntity: data,
+                          updateParentState: _updateParentState,
+                          isselect: isselect,
                         ),
                       );
                     },
@@ -63,7 +72,15 @@ class _WeeklyChallengePageState extends State<WeeklyChallengePage> {
 
 class ItemWeekly extends StatefulWidget {
   final ChallengesEntity challengesEntity;
-  const ItemWeekly({super.key, required this.challengesEntity});
+  final void Function(Map<String, String>) updateParentState;
+  final Map<String, dynamic>? isselect;
+
+  const ItemWeekly({
+    super.key,
+    required this.challengesEntity,
+    required this.updateParentState,
+    required this.isselect,
+  });
 
   @override
   State<ItemWeekly> createState() => _ItemWeeklyState();
@@ -71,7 +88,6 @@ class ItemWeekly extends StatefulWidget {
 
 class _ItemWeeklyState extends State<ItemWeekly> {
   final oponnentsID = <dynamic>[];
-  final isselect = {};
   String challengeName = "";
 
   String _formatDate(DateTime date) {
@@ -100,53 +116,70 @@ class _ItemWeeklyState extends State<ItemWeekly> {
     final homebloc = context.read<HomeBloc>();
     final authbloc = context.read<AuthBloc>();
     return GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (widget.challengesEntity.type == 2) {
-          showDialog(
+          await showDialog(
             context: context,
             builder: (context) {
               return Dialog(
                 child: Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(),
+                  padding: EdgeInsets.all(15.w),
+                  decoration: const BoxDecoration(),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       if (widget.challengesEntity.type == 2)
                         Container(
-                          margin: const EdgeInsets.all(10),
+                          margin: EdgeInsets.all(10.w),
                           alignment: Alignment.center,
                           child: DecoratedBox(
                             decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
+                              borderRadius: BorderRadius.circular(5.r),
                               border: Border.all(color: Colors.grey),
                             ),
-                            child: DropdownButton<dynamic>(
-                              value: isselect["name"],
-                              hint: const Text("Selecciona un oponente"),
-                              alignment: Alignment.center,
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 20),
-                              borderRadius: BorderRadius.circular(20),
-                              underline: SizedBox.shrink(),
-                              items: oponnentsID
-                                  .map(
-                                    (value) => DropdownMenuItem(
-                                      value: value,
-                                      child: Center(child: Text(value["name"])),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) {
-                                final data = value as Map<String, dynamic>;
-                                setState(() {
-                                  isselect.addAll(
-                                    {
-                                      "id": data['id'].toString(),
-                                      "name": data['name'].toString(),
-                                    },
-                                  );
-                                });
+                            child: BlocBuilder<DuelCubit, String>(
+                              builder: (context, state) {
+                                return DropdownButton<dynamic>(
+                                  value: state.isEmpty ? null : state,
+                                  hint: const Text("Selecciona un oponente"),
+                                  alignment: Alignment.center,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20),
+                                  borderRadius: BorderRadius.circular(10.r),
+                                  underline: SizedBox.shrink(),
+                                  items: oponnentsID
+                                      .map(
+                                        (value) => DropdownMenuItem(
+                                          value: value["id"],
+                                          child: Center(
+                                              child: Text(value["name"])),
+                                        ),
+                                      )
+                                      .toList(),
+                                  onChanged: (value) {
+                                    final selectedOpponent =
+                                        oponnentsID.firstWhere(
+                                      (opponent) => opponent["id"] == value,
+                                      orElse: () => {"id": null, "name": null},
+                                    );
+                                    print(
+                                        'SB - selectedOpponent: $selectedOpponent');
+                                    setState(() {
+                                      print(
+                                          'SB - widget.isselect: ${widget.isselect}');
+                                    });
+                                    context
+                                        .read<DuelCubit>()
+                                        .changeValue(value);
+
+                                    final isselect = {
+                                      "id": selectedOpponent['id'].toString(),
+                                      "name":
+                                          selectedOpponent['name'].toString(),
+                                    };
+                                    widget.updateParentState(isselect);
+                                  },
+                                );
                               },
                             ),
                           ),
@@ -164,7 +197,7 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                             labelText: "Nombre del Reto",
                             hintText: "Escribe un nombre para el reto",
                             border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
+                              borderRadius: BorderRadius.circular(10.r),
                             ),
                           ),
                         ),
@@ -174,8 +207,15 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                         children: [
                           ElevatedButton(
                             onPressed: () {
-                              if (isselect['id'] != null &&
-                                  challengeName != null) {
+                              if (context.read<DuelCubit>().state.isNotEmpty &&
+                                  challengeName.isNotEmpty) {
+                                final DateFormat formatter =
+                                    DateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+                                final String formattedStartDate = formatter
+                                    .format(widget.challengesEntity.startDate!);
+                                final String formattedEndDate = formatter
+                                    .format(widget.challengesEntity.endDate!);
+
                                 homebloc.add(
                                   HomeEvent.onAssignChallengesByType(
                                     type:
@@ -183,16 +223,45 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                                     body: null,
                                     group: {
                                       "challengerId": authbloc.state.idUser,
-                                      "opponentId": isselect['id'],
+                                      "opponentId":
+                                          context.read<DuelCubit>().state,
                                       "challengeId": widget.challengesEntity.id,
-                                      "startDate":
-                                          widget.challengesEntity.startDate,
-                                      "endDtae":
-                                          widget.challengesEntity.endDate,
+                                      "startDate": formattedStartDate,
+                                      "endDtae": formattedEndDate,
                                       "challengeText": challengeName,
                                     },
                                   ),
                                 );
+                                Navigator.of(context).pop();
+                                ScaffoldMessenger.of(context)
+                                  ..showSnackBar(
+                                    SnackBar(
+                                      shape: OutlineInputBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(10.r)),
+                                      behavior: SnackBarBehavior.floating,
+                                      dismissDirection: DismissDirection.up,
+                                      margin: EdgeInsets.only(
+                                        bottom:
+                                            MediaQuery.of(context).size.height -
+                                                150,
+                                        left: 10,
+                                        right: 10,
+                                      ),
+                                      content: Container(
+                                        decoration: BoxDecoration(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                        ),
+                                        child: const Column(
+                                          children: [
+                                            Text("Message"),
+                                            Text("Reto asignado")
+                                          ],
+                                        ),
+                                      ),
+                                    ),
+                                  );
                               } else {
                                 ScaffoldMessenger.of(context)
                                   ..hideCurrentSnackBar()
@@ -257,20 +326,19 @@ class _ItemWeeklyState extends State<ItemWeekly> {
       child: Stack(
         children: [
           Container(
-            // height: 130,
-            // margin: const EdgeInsets.symmetric(vertical: 20),
-            padding: const EdgeInsets.all(10),
+            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 5.h),
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(20),
+              borderRadius: BorderRadius.circular(10.r),
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Padding(
-                  padding: const EdgeInsets.only(right: 10),
-                  child: Image.asset(AppImages.test),
+                  padding: EdgeInsets.only(right: 10.w),
+                  child:
+                      Image.asset(AppImages.test, height: 100.w, width: 100.w),
                 ),
                 Expanded(
                   child: Column(
@@ -278,33 +346,46 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                     mainAxisSize: MainAxisSize.max,
                     children: [
                       Padding(
-                        padding: const EdgeInsets.only(top: 15),
+                        padding: EdgeInsets.only(top: 22.5.h),
                         child: Text(
                           widget.challengesEntity.name ?? "",
-                          style: robotoMedium(),
+                          style: robotoMedium().copyWith(
+                              fontSize: 14.sp, fontWeight: FontWeight.w600),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(top: 5, bottom: 10),
+                        padding: EdgeInsets.only(top: 5.h, bottom: 10.h),
                         child: Text(
                           widget.challengesEntity.description ?? "",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 2,
-                          style: robotoMedium(),
+                          style: robotoMedium().copyWith(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w400,
+                              color: Colors.grey),
                         ),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
+                        padding: EdgeInsets.only(bottom: 5.h),
                         child: Text(
-                            "Fecha de inicio: ${_formatDate(widget.challengesEntity.startDate!)}"),
+                            "Fecha de inicio: ${_formatDate(widget.challengesEntity.startDate!)}",
+                            style: robotoRegular().copyWith(
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w200,
+                                height: 1)),
                       ),
                       Padding(
-                        padding: const EdgeInsets.only(bottom: 5),
+                        padding: EdgeInsets.only(bottom: 10.h),
                         child: Text(
-                            "Fecha final: ${_formatDate(widget.challengesEntity.endDate!)}"),
+                          "Fecha final: ${_formatDate(widget.challengesEntity.endDate!)}",
+                          style: robotoRegular().copyWith(
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w200,
+                              height: 1),
+                        ),
                       ),
                       Container(
-                        height: 17,
+                        height: 17.h,
                         decoration: BoxDecoration(
                           color: HexColor("#CDECFF"),
                           borderRadius: BorderRadius.circular(3),
@@ -312,7 +393,7 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                         alignment: Alignment.centerLeft,
                         child: Container(
                           width: MediaQuery.sizeOf(context).width / 5,
-                          height: 17,
+                          height: 17.h,
                           decoration: BoxDecoration(
                             color: HexColor("#3899DE"),
                             borderRadius: BorderRadius.circular(3),
@@ -322,51 +403,65 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                             "45%",
                             style: robotoRegular(
                               color: Colors.white,
-                              fontSize: 8,
+                              fontSize: 8.sp,
                             ),
                           ),
                         ),
                       ),
                       if (widget.challengesEntity.type == 1)
-                        Padding(
-                          padding: const EdgeInsets.only(top: 5),
+                        Container(
+                          height: 36.h,
+                          padding: EdgeInsets.only(top: 5.h),
                           child: Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
-                              ElevatedButton(
-                                onPressed: () {
-                                  homebloc.add(
-                                    HomeEvent.onAssignChallengesByType(
-                                      type: widget.challengesEntity.type
-                                          .toString(),
-                                      body: (
-                                        authbloc.state.idUser ?? "",
-                                        widget.challengesEntity.id ?? ""
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {
+                                    homebloc.add(
+                                      HomeEvent.onAssignChallengesByType(
+                                        type: widget.challengesEntity.type
+                                            .toString(),
+                                        body: (
+                                          authbloc.state.idUser ?? "",
+                                          widget.challengesEntity.id ?? ""
+                                        ),
+                                        group: null,
                                       ),
-                                      group: null,
-                                    ),
-                                  );
-                                },
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.blue,
-                                  // minimumSize: const Size(100, 40),
-                                ),
-                                child: Text(
-                                  "Aceptar",
-                                  style: robotoMedium(
-                                      fontSize: 14, color: Colors.white),
+                                    );
+                                    SuccessDialog(
+                                            title: 'Éxito',
+                                            description: 'Reto aceptado')
+                                        .show(context);
+                                    // widget.updateParentState();
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.blue,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.w),
+                                  ),
+                                  child: Text(
+                                    "Aceptar",
+                                    style: robotoMedium(
+                                        fontSize: 13.sp, color: Colors.white),
+                                  ),
                                 ),
                               ),
-                              ElevatedButton(
-                                onPressed: () {},
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  // minimumSize: const Size(100, 40),
-                                ),
-                                child: Text(
-                                  "Rechazar",
-                                  style: robotoMedium(
-                                      fontSize: 14, color: Colors.white),
+                              SizedBox(width: 5.w),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () {},
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    padding:
+                                        EdgeInsets.symmetric(horizontal: 5.w),
+                                    // minimumSize: const Size(100, 40),
+                                  ),
+                                  child: Text(
+                                    "Rechazar",
+                                    style: robotoMedium(
+                                        fontSize: 13.sp, color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ],
@@ -375,70 +470,23 @@ class _ItemWeeklyState extends State<ItemWeekly> {
                     ],
                   ),
                 )
-                // const Padding(
-                //   padding: EdgeInsets.only(bottom: 20, left: 10),
-                //   child: Text("Lunes"),
-                // ),
-                // GestureDetector(
-                //   onTap: () {
-                //     context.pushNamed(Routes.exercise,
-                //         extra: (rutinaEntity.name, rutinaEntity.exercises));
-                //   },
-                //   child: Container(
-                //     padding: const EdgeInsets.all(20),
-                //     decoration: BoxDecoration(
-                //       borderRadius: BorderRadius.circular(20),
-                //       color: Colors.grey,
-                //     ),
-                //     child: Column(
-                //       children: [
-                //         Padding(
-                //           padding: EdgeInsets.only(bottom: 20),
-                //           child: Row(
-                //             mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //             children: [
-                //               Text(rutinaEntity.name ?? ""),
-                //               Text(
-                //                 rutinaEntity.difficultyLevel != null
-                //                     ? rutinaEntity.difficultyLevel.toString()
-                //                     : "",
-                //               ),
-                //             ],
-                //           ),
-                //         ),
-                //         Row(
-                //           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                //           children: [
-                //             Text(rutinaEntity.goal ?? ""),
-                //             Text(
-                //               rutinaEntity.isCompleted != null &&
-                //                       rutinaEntity.isCompleted!
-                //                   ? "Completado"
-                //                   : "Pendiente",
-                //             ),
-                //           ],
-                //         ),
-                //       ],
-                //     ),
-                //   ),
-                // )
               ],
             ),
           ),
           Align(
             alignment: Alignment.topRight,
             child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              margin: const EdgeInsets.only(right: 15),
-              decoration: const BoxDecoration(
-                borderRadius: BorderRadius.vertical(
-                  bottom: Radius.circular(10),
+              padding: EdgeInsets.only(left: 20.w, right: 20.w),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.only(
+                  topRight: Radius.circular(10.r),
+                  bottomLeft: Radius.circular(10.r),
                 ),
                 color: Colors.black,
               ),
               child: Text(
                 "Puntos a Ganar ${widget.challengesEntity.points}",
-                style: robotoMedium(color: Colors.white),
+                style: robotoMedium(color: Colors.white, fontSize: 12.sp),
               ),
             ),
           )
@@ -446,181 +494,4 @@ class _ItemWeeklyState extends State<ItemWeekly> {
       ),
     );
   }
-  // @override
-  // Widget build(BuildContext context) {
-  //   final homebloc = context.read<HomeBloc>();
-  //   final authbloc = context.read<AuthBloc>();
-  //   return Container(
-  //     margin: const EdgeInsets.symmetric(vertical: 20),
-  //     decoration: const BoxDecoration(),
-  //     child: Column(
-  //       crossAxisAlignment: CrossAxisAlignment.start,
-  //       children: [
-  //         const Padding(
-  //           padding: EdgeInsets.only(bottom: 20, left: 10),
-  //           child: Text("Reto Individual"),
-  //         ),
-  //         Container(
-  //           padding: const EdgeInsets.all(20),
-  //           decoration: BoxDecoration(
-  //             color: const Color.fromARGB(255, 197, 196, 196),
-  //             borderRadius: BorderRadius.circular(20),
-  //           ),
-  //           child: Column(
-  //             crossAxisAlignment: CrossAxisAlignment.start,
-  //             children: [
-  //               Padding(
-  //                 padding: const EdgeInsets.only(
-  //                   bottom: 20,
-  //                 ),
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     Text(widget.challengesEntity.name ?? ""),
-  //                     Text(
-  //                       widget.challengesEntity.points != null
-  //                           ? widget.challengesEntity.points.toString()
-  //                           : "0",
-  //                     ),
-  //                   ],
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: const EdgeInsets.only(bottom: 20),
-  //                 child: Text(
-  //                   widget.challengesEntity.description ?? "",
-  //                 ),
-  //               ),
-  //               Padding(
-  //                 padding: const EdgeInsets.only(bottom: 20),
-  //                 child: Row(
-  //                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                   children: [
-  //                     Text(_formatDate(widget.challengesEntity.startDate!)),
-  //                     Text(_formatDate(widget.challengesEntity.endDate!)),
-  //                   ],
-  //                 ),
-  //               ),
-  //               if (widget.challengesEntity.type == 2)
-  //                 Container(
-  //                   margin: const EdgeInsets.all(10),
-  //                   alignment: Alignment.center,
-  //                   child: DecoratedBox(
-  //                     decoration: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       border: Border.all(color: Colors.grey),
-  //                     ),
-  //                     child: DropdownButton<dynamic>(
-  //                       value: isselect["name"],
-  //                       hint: const Text("Selecciona un oponente"),
-  //                       alignment: Alignment.center,
-  //                       padding: const EdgeInsets.symmetric(horizontal: 20),
-  //                       borderRadius: BorderRadius.circular(20),
-  //                       items: oponnentsID
-  //                           .map(
-  //                             (value) => DropdownMenuItem(
-  //                               value: value,
-  //                               child: Center(child: Text(value["name"])),
-  //                             ),
-  //                           )
-  //                           .toList(),
-  //                       onChanged: (value) {
-  //                         final data = value as Map<String, dynamic>;
-  //                         setState(() {
-  //                           isselect.addAll(
-  //                             {
-  //                               "id": data['id'].toString(),
-  //                               "name": data['name'].toString(),
-  //                             },
-  //                           );
-  //                         });
-  //                       },
-  //                     ),
-  //                   ),
-  //                 ),
-  //               Row(
-  //                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                 children: [
-  //                   ElevatedButton(
-  //                     onPressed: () {
-  //                       if (widget.challengesEntity.type != null &&
-  //                           widget.challengesEntity.type == 1) {
-  //                         // debugPrint("el id es ${authbloc.state.idUser}");
-  //                         homebloc.add(
-  //                           HomeEvent.onAssignChallengesByType(
-  //                             type: widget.challengesEntity.type.toString(),
-  //                             body: (
-  //                               authbloc.state.idUser ?? "",
-  //                               widget.challengesEntity.id ?? ""
-  //                             ),
-  //                             group: null,
-  //                           ),
-  //                         );
-  //                       } else if (isselect['id'] != null) {
-  //                         homebloc.add(
-  //                           HomeEvent.onAssignChallengesByType(
-  //                             type: widget.challengesEntity.type.toString(),
-  //                             body: null,
-  //                             group: {
-  //                               "challengerId": authbloc.state.idUser,
-  //                               "opponentId": isselect['id'],
-  //                               "challengeId": widget.challengesEntity.id,
-  //                               "startDate": widget.challengesEntity.startDate,
-  //                               "endDtae": widget.challengesEntity.endDate,
-  //                               "challengeText":
-  //                                   widget.challengesEntity.description,
-  //                             },
-  //                           ),
-  //                         );
-  //                       } else {
-  //                         ScaffoldMessenger.of(context)
-  //                           ..hideCurrentSnackBar()
-  //                           ..showSnackBar(
-  //                             SnackBar(
-  //                               shape: OutlineInputBorder(
-  //                                   borderRadius: BorderRadius.circular(20)),
-  //                               behavior: SnackBarBehavior.floating,
-  //                               dismissDirection: DismissDirection.vertical,
-  //                               content: Container(
-  //                                 decoration: BoxDecoration(
-  //                                   borderRadius: BorderRadius.circular(20),
-  //                                 ),
-  //                                 child: const Column(
-  //                                   children: [
-  //                                     Text("Message"),
-  //                                     Text("Selecciona a tu oponente")
-  //                                   ],
-  //                                 ),
-  //                               ),
-  //                             ),
-  //                           );
-  //                       }
-  //                     },
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.blue,
-  //                     ),
-  //                     child: const Text(
-  //                       "Aceptar",
-  //                       style: TextStyle(color: Colors.white),
-  //                     ),
-  //                   ),
-  //                   ElevatedButton(
-  //                     onPressed: () {},
-  //                     style: ElevatedButton.styleFrom(
-  //                       backgroundColor: Colors.red,
-  //                     ),
-  //                     child: const Text(
-  //                       "Rechazar",
-  //                       style: TextStyle(color: Colors.white),
-  //                     ),
-  //                   )
-  //                 ],
-  //               )
-  //             ],
-  //           ),
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
 }

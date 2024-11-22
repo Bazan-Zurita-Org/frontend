@@ -1,7 +1,9 @@
+import 'package:app_gym/core/helper/app_constants.dart';
 import 'package:app_gym/core/helper/roboto_styles.dart';
 import 'package:app_gym/features/home/presentation/bloc/home_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ItemAnimationBottom extends StatefulWidget {
   final int isselect;
@@ -100,7 +102,7 @@ class _ItemAnimationBottomState extends State<ItemAnimationBottom>
               return Container(
                 // width: _animation.value + textWidth,
                 // constraints: const BoxConstraints(maxWidth: 200),
-                height: 30,
+                height: 30.h,
                 padding: _animation.value == 30
                     ? EdgeInsets.zero
                     : const EdgeInsets.symmetric(
@@ -108,8 +110,9 @@ class _ItemAnimationBottomState extends State<ItemAnimationBottom>
                       ),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(43),
-                  color:
-                      _animation.value == 30 ? Colors.transparent : Colors.blue,
+                  color: _animation.value == 30
+                      ? Colors.transparent
+                      : AppConstants.primaryColor,
                 ),
                 alignment: Alignment.center,
                 child: SingleChildScrollView(

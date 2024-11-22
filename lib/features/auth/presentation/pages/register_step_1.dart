@@ -25,15 +25,7 @@ class _RegisterStep1State extends State<RegisterStep1> {
         height: MediaQuery.sizeOf(context).height,
         padding: const EdgeInsets.symmetric(horizontal: 50),
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              HexColor("#65AED8"),
-              HexColor("#8897DA"),
-              HexColor("#8F88E9"),
-            ],
-          ),
+          color: HexColor("#384046"),
         ),
         child: SingleChildScrollView(
           child: Form(

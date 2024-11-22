@@ -1,3 +1,7 @@
+import 'dart:ui';
+
+import 'package:hexcolor/hexcolor.dart';
+
 class AppConstants {
   static const appName = "App Gym";
   static const token = "app_token";
@@ -6,7 +10,7 @@ class AppConstants {
 
   //urls
   static const baseUrl =
-      "https://3e72-2800-200-e380-1ec1-d005-4e28-7253-f130.ngrok-free.app/";
+      "https://dada-2800-200-e380-1ec1-45db-37a8-356-bf0.ngrok-free.app/";
   static const login = "api/login";
   static const register = "api/trainees";
   static String userforId(String id) => "api/trainees/$id";
@@ -15,7 +19,12 @@ class AppConstants {
   static const challengesComplete = "api/challenges/complete";
   static const rankings = "api/rankings";
   static String challengesforUser(String id) => "api/trainees/$id/challenges";
+  static String dietForId(String id) => "api/trainees/$id/diets";
+
   static const assignDuelsToUser = "api/duels/";
   static const duelsaccept = "api/duels/accept";
   static String getDuelsPropuest(String id) => "api/trainees/$id/duels";
+  static Color primaryColor = HexColor("#267157");
+  static Color primaryLightColor = HexColor("#6AB29C");
+  static Color surfaceColor = HexColor("#F2C84C");
 }

@@ -12,6 +12,7 @@ class UserEntity extends Equatable {
   final String? phone;
   final String? fitnessGoal;
   final double? targetWeigth;
+  final int? points;
 
   const UserEntity(
       {required this.firstName,
@@ -24,7 +25,8 @@ class UserEntity extends Equatable {
       required this.dateOfBirth,
       required this.phone,
       required this.fitnessGoal,
-      required this.targetWeigth});
+      required this.targetWeigth,
+      required this.points});
   @override
   List<Object?> get props => [
         firstName,
@@ -36,6 +38,7 @@ class UserEntity extends Equatable {
         dateOfBirth,
         phone,
         fitnessGoal,
-        targetWeigth
+        targetWeigth,
+        points,
       ];
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class InputCustomAuth extends StatefulWidget {
   final TextEditingController controller;
@@ -37,48 +38,65 @@ class _InputCustomAuthState extends State<InputCustomAuth> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: widget.padding ?? const EdgeInsets.symmetric(vertical: 15),
-      child: TextFormField(
-        onTap: widget.onTap,
-        controller: widget.controller,
-        keyboardType: widget.keyboardType,
-        obscureText: obscureText,
-        readOnly: widget.readOnly,
-        cursorColor: Colors.blue,
-        decoration: InputDecoration(
-          contentPadding: const EdgeInsets.only(left: 20, top: 15, bottom: 15),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(color: Colors.blue),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide: const BorderSide(
-              color: Colors.blue,
+      padding: widget.padding ?? EdgeInsets.symmetric(vertical: 5.h),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: EdgeInsets.only(left: 12.0.w),
+            child: Text(
+              widget.label,
+              style: TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
             ),
           ),
-          labelText: widget.label,
-          labelStyle: const TextStyle(fontSize: 16),
-          floatingLabelStyle: const TextStyle(color: Colors.blue),
-          suffixIcon: widget.ispassword
-              ? GestureDetector(
-                  onTap: () {
-                    setState(() {
-                      obscureText = !obscureText;
-                    });
-                  },
-                  child: obscureText
-                      ? const Icon(
-                          Icons.visibility,
-                          color: Colors.blue,
-                        )
-                      : const Icon(
-                          Icons.visibility_off,
-                          color: Colors.blue,
-                        ),
-                )
-              : widget.suffixIcon,
-        ),
+          // SizedBox(height: 5.h),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 15.w, vertical: 5.h),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20.r),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    onTap: widget.onTap,
+                    controller: widget.controller,
+                    keyboardType: widget.keyboardType,
+                    obscureText: obscureText,
+                    readOnly: widget.readOnly,
+                    cursorColor: Colors.blue,
+                    style:
+                        TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w500),
+                    decoration: InputDecoration(
+                      border: InputBorder.none,
+                      isCollapsed: true,
+                    ),
+                  ),
+                ),
+                if (widget.ispassword)
+                  GestureDetector(
+                    onTap: () {
+                      setState(() {
+                        obscureText = !obscureText;
+                      });
+                    },
+                    child: obscureText
+                        ? const Icon(
+                            Icons.visibility,
+                            color: Colors.blue,
+                          )
+                        : const Icon(
+                            Icons.visibility_off,
+                            color: Colors.blue,
+                          ),
+                  )
+                else if (widget.suffixIcon != null)
+                  widget.suffixIcon!,
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

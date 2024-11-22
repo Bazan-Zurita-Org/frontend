@@ -19,7 +19,7 @@ class RutinaModel extends RutinaEntity {
       required super.exercises});
 
   factory RutinaModel.fromJson(Map<String, dynamic> json) => RutinaModel(
-        id: json["id"],
+        id: json["id"] ?? 0,
         name: json["name"],
         date: json["date"] == null ? null : DateTime.parse(json["date"]),
         goal: json["goal"],

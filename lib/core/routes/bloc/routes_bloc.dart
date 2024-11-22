@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:app_gym/features/auth/domain/usecases/authstatus/get_save_auth_status_use_case.dart';
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -12,11 +10,16 @@ class RoutesBloc extends Bloc<RoutesEvent, RoutesState> {
   RoutesBloc(this.getSaveAuthStatusUseCase)
       : super(RoutesState.initialState()) {
     on<_OnGetAuthStatus>(_onGetAuthStatus);
+    on<_OnLogout>(_onLogout);
   }
 
   void _onGetAuthStatus(
       _OnGetAuthStatus event, Emitter<RoutesState> emit) async {
     final authstatus = await getSaveAuthStatusUseCase();
     emit(state.copyWith(authStatus: authstatus));
+  }
+
+  void _onLogout(_OnLogout event, Emitter<RoutesState> emit) {
+    emit(state.copyWith(authStatus: AuthStatus.unauthenticated));
   }
 }
